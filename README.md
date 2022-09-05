@@ -1,6 +1,6 @@
 # SilDec_Model
  Tracking positions of planets as time progresses
- Goals for this project:
+ ## Goals for this project:
  - Implement core 3D ellipse functions for planetary orbits (copy from Mathematica)
  - (Related, be able to tweak the orbital parameters without entirely dying)
  - Zoom-able scale for viewing relevant sections of solar system
