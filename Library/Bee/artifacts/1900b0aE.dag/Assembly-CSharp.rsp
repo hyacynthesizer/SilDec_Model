@@ -356,7 +356,6 @@
 "Assets/AxisSpin.cs"
 "Assets/BodiesHandler.cs"
 "Assets/CompassHandler.cs"
-"Assets/CompassLock.cs"
 "Assets/MainCamera.cs"
 "Assets/Mathd.cs"
 "Assets/OrbitTest.cs"

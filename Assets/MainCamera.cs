@@ -11,10 +11,12 @@ public class MainCamera : MonoBehaviour
     public float pitchVel = 20f;
     public float ascendVel = 4f;
     public float descendVel = 2f;
+    public float floorHeight = 0.01f; // lowest camera height
+    private float slowDown = 0.75f;
     
     void Start()
     {
-        transform.position = new Vector3(0,2,-2);
+        transform.position = new Vector3(0,0.4f,-2f);
         transform.rotation = Quaternion.identity;
     }
 
@@ -39,14 +41,19 @@ public class MainCamera : MonoBehaviour
         }
         
         var dt = Time.deltaTime;
+        dt *= slowDown;
         horizTrans *= dt;
         vertTrans *= dt;
         horizRot *= dt;
         vertRot *= dt;
         ySpeed *= dt;
         
+        // do the movement things
         transform.Translate(vertTrans, 0, horizTrans);
-        transform.Translate(0, ySpeed, 0, Space.World);
+        if (transform.position.y > floorHeight)
+        {
+            transform.Translate(0, ySpeed, 0, Space.World);
+        }
         transform.Rotate(-vertRot, horizRot, 0);
         
         if (reset)
@@ -59,5 +66,7 @@ public class MainCamera : MonoBehaviour
             transform.Rotate(anglesAdjust);
         }
         
+        
+           
     }
 }

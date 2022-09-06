@@ -1,0 +1,3 @@
+ID,TargetCenter,Axis,Eccentricity,Inclination,LOaN,AoP,TA,OrbitalPeriod,OrbitalVelocity,RotationPeriod,Radius
+S1,World,0.08846,0.092,0.120,14.216,20.821,37.228,0.05739,9.68479,20.96112,S1.064
+S2,World,0.09854,0.092,0.120,14.216,200.821,37.228,0.05739,10.78838,20.96112,S0.939
