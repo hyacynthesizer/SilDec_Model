@@ -1,2 +1,6 @@
 # ignore the temp folder so access errors will shut up
 /Temp/
+# ignore all the binary files in the library folder that update Whenever
+# remove this later if it becomes essential for function to keep them up
+/Library/
+/UserSettings/
