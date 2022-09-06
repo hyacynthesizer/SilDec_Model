@@ -10,21 +10,21 @@ public class CompassLock : MonoBehaviour
     public GameObject following;
     public float distance = 1.5f;
     
-    private Vector3 offset;
-    private Vector3 clamp;
+//    private Vector3 offset;
+//    private Vector3 clamp;
     
     // Start is called before the first frame update
     void Start()
     {
-        transform.position = Vector3.right * distance;
+        transform.position = new Vector3(0, 0, -distance);
     }
 
     // Update is called once per frame
     void Update()
     {
-        offset  = following.transform.position;
-        clamp = Vector3.Normalize(offset);
-        transform.position = clamp * distance;
+//        offset  = following.transform.position;
+//        clamp = Vector3.Normalize(offset);
+//        transform.position = clamp * distance;
         transform.LookAt(target);
     }
 }

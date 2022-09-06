@@ -353,8 +353,15 @@
 -r:"Library/Bee/artifacts/1900b0aE.dag/Unity.VSCode.Editor.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/UnityEditor.UI.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aE.dag/UnityEngine.UI.ref.dll"
+"Assets/AxisSpin.cs"
+"Assets/BodiesHandler.cs"
+"Assets/CompassHandler.cs"
 "Assets/CompassLock.cs"
+"Assets/MainCamera.cs"
+"Assets/Mathd.cs"
 "Assets/OrbitTest.cs"
+"Assets/Vector2d.cs"
+"Assets/Vector3d.cs"
 -langversion:9.0
 
 /deterministic
