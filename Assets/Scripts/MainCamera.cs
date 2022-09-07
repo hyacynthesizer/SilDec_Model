@@ -5,12 +5,12 @@ using UnityEngine;
 public class MainCamera : MonoBehaviour
 {
     
-    public float horizVel = 10f;
-    public float vertVel = 10f;
-    public float panVel = 20f;
-    public float pitchVel = 20f;
-    public float ascendVel = 4f;
-    public float descendVel = 2f;
+    public float horizVel = 5f;
+    public float vertVel = 5f;
+    public float panVel = 30f;
+    public float pitchVel = 30f;
+    public float ascendVel = 2f;
+    public float descendVel = 1f;
     public float floorHeight = 0.01f; // lowest camera height
     private float slowDown = 0.75f;
     

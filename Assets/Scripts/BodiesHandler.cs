@@ -22,7 +22,10 @@ public class BodiesHandler : MonoBehaviour
         transform.position = new Vector3(0,0,0); // no more positioning jank, please!
         
         // find the prefabs
-        star = Resources.Load<GameObject>("starPrefab");
+        star = Resources.Load<GameObject>("Prefabs/starPrefab");
+        rocky = Resources.Load<GameObject>("Prefabs/rockyPrefab");
+        gassy = Resources.Load<GameObject>("Prefabs/gassyPrefab");
+        moon = Resources.Load<GameObject>("Prefabs/moonPrefab");
         
         // read in CSV of raw planetary data
         string csv = data.ToString();
@@ -56,9 +59,30 @@ public class BodiesHandler : MonoBehaviour
     
     private GameObject PlanetCSV(string data) // take in row of text, parse out parameters, return instance of planetary body
     {
+        // null initial object in case the csv prefab tag is broken
+        GameObject newBody = new GameObject();
+        newBody.AddComponent<Orbit>();
         string[] stats = data.Split(',');
+        
+        // pick correct prefab based on tag on radius
         char planetTypeID = stats[10][0];
-        GameObject newBody = Instantiate(star) as GameObject;
+        var tagList = new(char ID, GameObject BodyType)[]
+        {
+            ('S', star),
+            ('E', rocky),
+            ('J', gassy),
+            ('M', moon)
+        };
+        
+        foreach (var tag in tagList)
+        {
+            if (planetTypeID == tag.ID)
+            {
+                Destroy(newBody);
+                newBody = Instantiate(tag.BodyType) as GameObject;
+            }
+        }
+        
         
         Orbit details = newBody.GetComponent<Orbit>();
         // set values of newBody to data from the string[]
