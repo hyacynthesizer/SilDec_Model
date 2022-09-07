@@ -358,7 +358,9 @@
 "Assets/CompassHandler.cs"
 "Assets/MainCamera.cs"
 "Assets/Mathd.cs"
+"Assets/Orbit.cs"
 "Assets/OrbitTest.cs"
+"Assets/PlanetFromCSV.cs"
 "Assets/Vector2d.cs"
 "Assets/Vector3d.cs"
 -langversion:9.0

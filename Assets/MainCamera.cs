@@ -20,7 +20,7 @@ public class MainCamera : MonoBehaviour
         transform.rotation = Quaternion.identity;
     }
 
-    void Update()
+    void Update() // add in support for different camera modes? like overhead for measuring, etc
     {
         // read keys
         float horizTrans = Input.GetAxis("Vertical") * horizVel; // forward and back
@@ -35,7 +35,7 @@ public class MainCamera : MonoBehaviour
             ySpeed += ascendVel; // I GET UP!
         }
         
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
         {
             ySpeed -= descendVel; // FUCK IT, DESCEND
         }
