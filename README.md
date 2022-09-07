@@ -15,3 +15,7 @@
  - Hopefully, some kind of orbital interception plotting-thing, to know when to aim for, given ship speed
  - Logging and displaying history of ship's travel paths
  - Making it all look nice, and sort of like what the ship's maps would look like
+## Notes to Viewers
+I hid the Library, Logs, and Temp folders of the Unity project, since GitHub was pitching a fit over them.
+(Or they would update in a way that GitHub couldn't track and I didn't want them clogging up my commit history :p )
+If you run into issues when attempting to reproduce my work, it will probably be those's fault.
