@@ -12,6 +12,7 @@ public class BodiesHandler : MonoBehaviour
     private GameObject gassy;
     private GameObject moon;
     
+    public GameObject self;
     public double worldTime;
     
     // dictionary to hold all the planets' ID's and each planet's script
@@ -22,7 +23,6 @@ public class BodiesHandler : MonoBehaviour
     void Start()
     {
         transform.position = new Vector3(0,0,0); // no more positioning jank, please!
-        
         // find the prefabs
         star = Resources.Load<GameObject>("Prefabs/starPrefab");
         rocky = Resources.Load<GameObject>("Prefabs/rockyPrefab");
@@ -66,6 +66,11 @@ public class BodiesHandler : MonoBehaviour
     void ResetAll()
     {
         // iterate over all bodies, moving them to their t=0 positions
+    }
+    
+    public static void TranslateAll(Vector3 move)
+    {
+        GameObject.Find("Stellar Bodies").transform.Translate(move);
     }
     
     private GameObject PlanetCSV(string data) // take in row of text, parse out parameters, return instance of planetary body

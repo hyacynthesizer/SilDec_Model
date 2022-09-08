@@ -40,6 +40,7 @@ namespace UnityEngine {
         public static double Atan2(double y, double x) {
             return Math.Atan2(y, x);
         }
+        
 
         public static double Sqrt(double d) {
             return Math.Sqrt(d);

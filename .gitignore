@@ -5,3 +5,6 @@
 /Library/
 /UserSettings/
 /Logs/
+Logs/AssetImportWorker1.log
+*.log
+*.dwlt
