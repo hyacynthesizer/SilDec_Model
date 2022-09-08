@@ -2,17 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
+//[ExecuteInEditMode]
 public class CompassHandler : MonoBehaviour
 {
     
     private Transform cam;
     private Transform axes;
     private Transform textbox;
+    private BodiesHandler bodies;
     
     void Start()
     {
         transform.position = new Vector3(0,0,0); // keep reference in place
+        bodies = (BodiesHandler)FindObjectOfType(typeof(BodiesHandler));
         
         // assign children from list, in order (WILL BREAK IF REORDERED)
         cam = transform.GetChild(0);

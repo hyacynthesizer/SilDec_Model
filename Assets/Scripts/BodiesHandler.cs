@@ -12,6 +12,8 @@ public class BodiesHandler : MonoBehaviour
     private GameObject gassy;
     private GameObject moon;
     
+    public double worldTime;
+    
     // dictionary to hold all the planets' ID's and each planet's script
     // essentially, manipulate planets via their script functions
     private IDictionary<string, Orbit> allPlanets = new Dictionary<string, Orbit>();
@@ -33,15 +35,24 @@ public class BodiesHandler : MonoBehaviour
         for (int i = 2; i < rows.Length; i++)
         {
             GameObject addBody = PlanetCSV(rows[i]);
-            addBody.transform.SetParent(this.transform);
+            addBody.transform.SetParent(this.transform); // set to be child of bodiesHandler
             addBody.SetActive(true);
-            addBody.name = addBody.GetComponent<Orbit>().id;
+            string name = addBody.GetComponent<Orbit>().id;
+            addBody.name = name; // rename instance
+            addBody.GetComponent<Orbit>().parent = addBody.transform;
+            
+            // set moons to child of planet
+            if (name[0] == 'M')
+            {
+                string match = name.Substring(name.Length - 2); // extract planet name
+//                print(match);
+                Orbit parentPlanet = allPlanets[match]; // get planet from dictionary
+//                print(parentPlanet.parent.name);
+                addBody.transform.SetParent(parentPlanet.parent); // attach to planet's transform
+            }
             allPlanets.Add(addBody.name,addBody.GetComponent<Orbit>());
         }
-        // foreach row in rows, run planetfromcsv, and shove the result planet and its object into the dictionary
-        // make the new objects be children of Stellar Bodies, and make moons be children of their planets
-        // after this, activate the new object, so its position isnt janked
-        // feed into dictionary of bodies and attributes
+        
     }
 
     
