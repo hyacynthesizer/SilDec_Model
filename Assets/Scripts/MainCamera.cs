@@ -5,25 +5,25 @@ using UnityEngine;
 public class MainCamera : MonoBehaviour
 {
     
-    public float horizVel;
-    public float vertVel;
-    public float panVel;
-    public float pitchVel;
-    public float ascendVel;
-    public float descendVel;
-    public float floorHeight; // lowest camera height
+    private float horizVel;
+    private float vertVel;
+    private float panVel;
+    private float pitchVel;
+    private float ascendVel;
+    private float descendVel;
+    private float floorHeight; // lowest camera height
     private float slowDown = 0.75f;
     
-    public float maxOriginDistance = 75f; // make this private once testing isnt necessary
+    public float maxOriginDistance = 100f; // make this private once testing isnt necessary
     
     private BodiesHandler bodies;
     
     void Start()
     {
-        horizVel = 5f; // just override these in the editor to test things
-        float vertVel = 5f;
-        float panVel = 30f;
-        float pitchVel = 30f;
+        horizVel = 50f;
+        float vertVel = 50f;
+        float panVel = 50f;
+        float pitchVel = 50f;
         float ascendVel = 2f;
         float descendVel = 1f;
         float floorHeight = 0.01f;
@@ -57,21 +57,16 @@ public class MainCamera : MonoBehaviour
         
         // do the movement things
         transform.Translate(vertTrans, 0, horizTrans);
-        if (transform.position.y <= floorHeight && ySpeed < 0)
+        /* if (transform.position.y <= floorHeight && ySpeed < 0)
         {
             ySpeed = 0f;
-        }
+        } */
         transform.Translate(0, ySpeed, 0, Space.World);
         transform.Rotate(-vertRot, horizRot, 0);
         
         if (reset)
         {
-            var anglesAdjust = transform.rotation.eulerAngles; // aaaa quaternions (4 a's, see :p )
-            anglesAdjust.y = 0; // make no change to y rotation
-            anglesAdjust *= -1; // invert rotation
-//            print(transform.rotation.eulerAngles);
-//            print(anglesAdjust);
-            transform.Rotate(anglesAdjust);
+            ResetTilt();
         }     
         
         // shifting origin
@@ -86,5 +81,15 @@ public class MainCamera : MonoBehaviour
     {
         this.transform.position = Vector3.zero;
         BodiesHandler.TranslateAll(-position);
+    }
+    
+    void ResetTilt()
+    {
+        var anglesAdjust = transform.rotation.eulerAngles; // aaaa quaternions (4 a's, see :p )
+            anglesAdjust.y = 0; // make no change to y rotation
+            anglesAdjust *= -1; // invert rotation
+//            print(transform.rotation.eulerAngles);
+//            print(anglesAdjust);
+        transform.Rotate(anglesAdjust);
     }
 }

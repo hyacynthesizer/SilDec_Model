@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using static System.Math;
 
 public class BodiesHandler : MonoBehaviour
 {
@@ -14,25 +15,39 @@ public class BodiesHandler : MonoBehaviour
     
     public GameObject self;
     public double worldTime;
+    private Vector3d truePos;
     
     // dictionary to hold all the planets' ID's and each planet's script
     // essentially, manipulate planets via their script functions
     private IDictionary<string, Orbit> allPlanets = new Dictionary<string, Orbit>();
     
+    // dictionary to hold all the increments that time can be updated
+    private IDictionary<string, double> timeSteps = new Dictionary<string, double>();
     
     void Start()
     {
         transform.position = new Vector3(0,0,0); // no more positioning jank, please!
+        truePos = Vector3d.zero;
         // find the prefabs
         star = Resources.Load<GameObject>("Prefabs/starPrefab");
         rocky = Resources.Load<GameObject>("Prefabs/rockyPrefab");
         gassy = Resources.Load<GameObject>("Prefabs/gassyPrefab");
         moon = Resources.Load<GameObject>("Prefabs/moonPrefab");
         
+        // initialize dictionary of time increments
+        timeSteps.Add("arcsecond", 1d/36d/36d);
+        timeSteps.Add("arcminute", 1d/36d);
+        timeSteps.Add("archour", 1d);
+        timeSteps.Add("arcshift", 36d);
+        timeSteps.Add("arcday", 1296d);
+        timeSteps.Add("arcmonth", 37584d);
+        timeSteps.Add("arcyear", 338256d);
+        timeSteps.Add("indiction", 1353024);
+        
         // read in CSV of raw planetary data
         string csv = data.ToString();
         string[] rows = csv.Split('\n');
-        for (int i = 2; i < rows.Length; i++)
+        for (int i = 2; i < rows.Length; i++) // generate planet for each row of CSV data
         {
             GameObject addBody = PlanetCSV(rows[i]);
             addBody.transform.SetParent(this.transform); // set to be child of bodiesHandler
@@ -48,7 +63,7 @@ public class BodiesHandler : MonoBehaviour
 //                print(match);
                 Orbit parentPlanet = allPlanets[match]; // get planet from dictionary
 //                print(parentPlanet.parent.name);
-                addBody.transform.SetParent(parentPlanet.parent); // attach to planet's transform
+                addBody.transform.SetParent(parentPlanet.parent, false); // attach to planet's transform
             }
             allPlanets.Add(addBody.name,addBody.GetComponent<Orbit>());
         }
@@ -58,7 +73,6 @@ public class BodiesHandler : MonoBehaviour
     
     void Update()
     {
-        // process for relocating world when camera-origin distance will cause float issues
         // process to adjust planet positions as a function of time
         // keeping track of world time in terms of earth days and system calendar
     }
@@ -66,14 +80,22 @@ public class BodiesHandler : MonoBehaviour
     void ResetAll()
     {
         // iterate over all bodies, moving them to their t=0 positions
+        foreach (var pair in allPlanets)
+        {
+            pair.Value.ResetPosition();
+        }
     }
     
     public static void TranslateAll(Vector3 move)
     {
-        GameObject.Find("Stellar Bodies").transform.Translate(move);
+        GameObject bodies = GameObject.Find("Stellar Bodies");
+        bodies.transform.Translate(move);
+        Vector3d updatePos = bodies.GetComponent<BodiesHandler>().truePos;
+        updatePos = updatePos + (Vector3d)move;
     }
     
-    private GameObject PlanetCSV(string data) // take in row of text, parse out parameters, return instance of planetary body
+    // take in row of text, parse out parameters, return instance of planetary body
+    private GameObject PlanetCSV(string data)
     {
         // null initial object in case the csv prefab tag is broken
         GameObject newBody = new GameObject();
@@ -94,7 +116,7 @@ public class BodiesHandler : MonoBehaviour
         {
             if (planetTypeID == tag.ID)
             {
-                Destroy(newBody);
+                Destroy(newBody); // get rid of the null object
                 newBody = Instantiate(tag.BodyType) as GameObject;
             }
         }
@@ -102,11 +124,7 @@ public class BodiesHandler : MonoBehaviour
         
         Orbit details = newBody.GetComponent<Orbit>();
         // set values of newBody to data from the string[]
-        details.id = stats[0];
-        // logic to extract enum type from planetTypeID
-        // ~enum bullshit~
-        // also set axisunits to Km if it's a moon
-//        print(stats[1]);
+        details.id = stats[0]; // yes this is gross but i can't think of a better way to do it
         details.axis = Double.Parse(stats[1]);
         details.ecc = Double.Parse(stats[2]);
         details.incl = Double.Parse(stats[3]);
@@ -116,7 +134,7 @@ public class BodiesHandler : MonoBehaviour
         details.orbper = Double.Parse(stats[7]);
         details.orbvel = Double.Parse(stats[8]);
         details.rotper = Double.Parse(stats[9]);
-        details.radius = Double.Parse(stats[10].Remove(0,1));
+        details.radius = Double.Parse(stats[10].Remove(0,1)); // enum type handling is done inside the prefabs
         return newBody;
     }
     

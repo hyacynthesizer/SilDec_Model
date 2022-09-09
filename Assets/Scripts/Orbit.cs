@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static System.Math;
+using System; // for number type properties, etc
 
 public class Orbit : MonoBehaviour // to be attached to each planet and prefab
 {
@@ -28,10 +29,11 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
     private BodiesHandler master;
     private double worldTime;
     private double currentTime;
+    private Vector3d basePosition;
     
     // converting distances and sizes to unity units
-    public static double AxisScale = 1; // AU to units
-    public static double RadiusScale = 1; // km to units
+    private static double AxisScale = 500d; // AU to units
+    private static double RadiusScale = 0.00001d; // km to units
     
     // constants for how big shit is
     private static double SunRadius = 696342; // in kilometers
@@ -55,24 +57,28 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
             axis /= AUinKM;
         }
         
-        // convert to radians
-        loan =* PI/180d;
-        aop =* PI/180d;
-        ta =* PI/180d;
+        basePosition = GetPosition(0d);
         
+        // convert to radians
+        loan *= PI/180d;
+        aop *= PI/180d;
+        ta *= PI/180d;
+        SetPosition(basePosition);
+        SetRadius(radius, type, parent);
     }
 
     // Update is called once per frame
     void Update()
     {
         worldTime = GetTime(master);
-        if (Mathd.Abs(worldTime - currentTime) >= Mathd.Epsilon)
+        if (Mathd.Abs(worldTime - currentTime) >= Double.Epsilon)
         {
             currentTime = worldTime;
             // call GetPosition and then move the GameObject accordingly
             // get truePosition
             // get trueRotation
             // update accordingly
+            SetPosition(truePosition);
         }
     }
     
@@ -99,6 +105,7 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
         destination.localScale = new Vector3(rad, rad, rad);
     }
     
+    // here be all the functions and stuff
     Vector3d GetPosition(double time) // where the orbit equation happens, scaling time n shit
     {
         static double Sin2(double d) {
@@ -120,9 +127,9 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
             newPosition.x = ((-(axis*ecc) + axis*Cos(time))*(Cos(aop)*Cos2(incl)*Cos(loan) + Cos(aop)*Cos(loan)*Sin2(incl) - Cos(incl)*Sin(aop)*Sin(loan)))/ (Cos2(aop)*Cos2(incl)*Cos2(loan) + Cos2(incl)*Cos2(loan)*Sin2(aop) + Cos2(aop)*Cos2(loan)*Sin2(incl) + Cos2(loan)*Sin2(aop)*Sin2(incl) +  Cos2(aop)*Cos2(incl)*Sin2(loan) + Cos2(incl)*Sin2(aop)*Sin2(loan) + Cos2(aop)*Sin2(incl)*Sin2(loan) + Sin2(aop)*Sin2(incl)*Sin2(loan)) + (axis*Sqrt(1 - Pow(ecc,2))*(-(Cos2(incl)*Cos(loan)*Sin(aop)) - Cos(loan)*Sin(aop)*Sin2(incl) - Cos(aop)*Cos(incl)*Sin(loan))*Sin(time))/(Cos2(aop)*Cos2(incl)*Cos2(loan) + Cos2(incl)*Cos2(loan)*Sin2(aop) + Cos2(aop)*Cos2(loan)*Sin2(incl) + Cos2(loan)*Sin2(aop)*Sin2(incl) + Cos2(aop)*Cos2(incl)*Sin2(loan) + Cos2(incl)*Sin2(aop)*Sin2(loan) + Cos2(aop)*Sin2(incl)*Sin2(loan) + Sin2(aop)*Sin2(incl)*Sin2(loan));
             // i am so sorry to anyone who has to read this for any reason
             // i did this initial matrix baking in mathematica
-            newPosition.y = ((-(axis*ecc) + axis*Cos(time))*(Cos(incl)*Cos(loan)*Sin(aop) + Cos(aop)*Cos2(incl)*Sin(loan) + Cos(aop)*Sin2(incl)*Sin(loan)))/(Cos2(aop)*Cos2(incl)*Cos2(loan) + Cos2(incl)*Cos2(loan)*Sin2(aop) + Cos2(aop)*Cos2(loan)*Sin2(incl) + Cos2(loan)*Sin2(aop)*Sin2(incl) + Cos2(aop)*Cos2(incl)*Sin2(loan) + Cos2(incl)*Sin2(aop)*Sin2(loan) + Cos2(aop)*Sin2(incl)*Sin2(loan) + Sin2(aop)*Sin2(incl)*Sin2(loan)) + (axis*Sqrt(1 - Pow(ecc,2d))*(Cos(aop)*Cos(incl)*Cos(loan) - Cos2(incl)*Sin(aop)*Sin(loan) - Sin(aop)*Sin2(incl)*Sin(loan))*Sin(time))/(Cos2(aop)*Cos2(incl)*Cos2(loan) + Cos2(incl)*Cos2(loan)*Sin2(aop) + Cos2(aop)*Cos2(loan)*Sin2(incl) + Cos2(loan)*Sin2(aop)*Sin2(incl) + Cos2(aop)*Cos2(incl)*Sin2(loan) + Cos2(incl)*Sin2(aop)*Sin2(loan) + Cos2(aop)*Sin2(incl)*Sin2(loan) + Sin2(aop)*Sin2(incl)*Sin2(loan));
+            newPosition.z = ((-(axis*ecc) + axis*Cos(time))*(Cos(incl)*Cos(loan)*Sin(aop) + Cos(aop)*Cos2(incl)*Sin(loan) + Cos(aop)*Sin2(incl)*Sin(loan)))/(Cos2(aop)*Cos2(incl)*Cos2(loan) + Cos2(incl)*Cos2(loan)*Sin2(aop) + Cos2(aop)*Cos2(loan)*Sin2(incl) + Cos2(loan)*Sin2(aop)*Sin2(incl) + Cos2(aop)*Cos2(incl)*Sin2(loan) + Cos2(incl)*Sin2(aop)*Sin2(loan) + Cos2(aop)*Sin2(incl)*Sin2(loan) + Sin2(aop)*Sin2(incl)*Sin2(loan)) + (axis*Sqrt(1 - Pow(ecc,2d))*(Cos(aop)*Cos(incl)*Cos(loan) - Cos2(incl)*Sin(aop)*Sin(loan) - Sin(aop)*Sin2(incl)*Sin(loan))*Sin(time))/(Cos2(aop)*Cos2(incl)*Cos2(loan) + Cos2(incl)*Cos2(loan)*Sin2(aop) + Cos2(aop)*Cos2(loan)*Sin2(incl) + Cos2(loan)*Sin2(aop)*Sin2(incl) + Cos2(aop)*Cos2(incl)*Sin2(loan) + Cos2(incl)*Sin2(aop)*Sin2(loan) + Cos2(aop)*Sin2(incl)*Sin2(loan) + Sin2(aop)*Sin2(incl)*Sin2(loan));
             // if you're reading this for debugging i apologize
-            newPosition.z = ((-(axis*ecc) + axis*Cos(time))*(Cos2(loan)*Sin(aop)*Sin(incl) + Sin(aop)*Sin(incl)*Sin2(loan)))/(Cos2(aop)*Cos2(incl)*Cos2(loan) + Cos2(incl)*Cos2(loan)*Sin2(aop) + Cos2(aop)*Cos2(loan)*Sin2(incl) + Cos2(loan)*Sin2(aop)*Sin2(incl) + Cos2(aop)*Cos2(incl)*Sin2(loan) + Cos2(incl)*Sin2(aop)*Sin2(loan) + Cos2(aop)*Sin2(incl)*Sin2(loan) + Sin2(aop)*Sin2(incl)*Sin2(loan)) + (axis*Sqrt(1 - Pow(ecc,2d))*(Cos(aop)*Cos2(loan)*Sin(incl) + Cos(aop)*Sin(incl)*Sin2(loan))*Sin(time))/(Cos2(aop)*Cos2(incl)*Cos2(loan) + Cos2(incl)*Cos2(loan)*Sin2(aop) + Cos2(aop)*Cos2(loan)*Sin2(incl) + Cos2(loan)*Sin2(aop)*Sin2(incl) + Cos2(aop)*Cos2(incl)*Sin2(loan) + Cos2(incl)*Sin2(aop)*Sin2(loan) + Cos2(aop)*Sin2(incl)*Sin2(loan) + Sin2(aop)*Sin2(incl)*Sin2(loan));
+            newPosition.y = ((-(axis*ecc) + axis*Cos(time))*(Cos2(loan)*Sin(aop)*Sin(incl) + Sin(aop)*Sin(incl)*Sin2(loan)))/(Cos2(aop)*Cos2(incl)*Cos2(loan) + Cos2(incl)*Cos2(loan)*Sin2(aop) + Cos2(aop)*Cos2(loan)*Sin2(incl) + Cos2(loan)*Sin2(aop)*Sin2(incl) + Cos2(aop)*Cos2(incl)*Sin2(loan) + Cos2(incl)*Sin2(aop)*Sin2(loan) + Cos2(aop)*Sin2(incl)*Sin2(loan) + Sin2(aop)*Sin2(incl)*Sin2(loan)) + (axis*Sqrt(1 - Pow(ecc,2d))*(Cos(aop)*Cos2(loan)*Sin(incl) + Cos(aop)*Sin(incl)*Sin2(loan))*Sin(time))/(Cos2(aop)*Cos2(incl)*Cos2(loan) + Cos2(incl)*Cos2(loan)*Sin2(aop) + Cos2(aop)*Cos2(loan)*Sin2(incl) + Cos2(loan)*Sin2(aop)*Sin2(incl) + Cos2(aop)*Cos2(incl)*Sin2(loan) + Cos2(incl)*Sin2(aop)*Sin2(loan) + Cos2(aop)*Sin2(incl)*Sin2(loan) + Sin2(aop)*Sin2(incl)*Sin2(loan));
         }
         
         
@@ -132,6 +139,11 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
     void SetPosition(Vector3d update) // downgrades to float position for rendering, etc
     {
         parent.position = (Vector3)update;
+    }
+    
+    public void ResetPosition() // to be called from the body handler
+    {
+        SetPosition(basePosition);
     }
     
 }

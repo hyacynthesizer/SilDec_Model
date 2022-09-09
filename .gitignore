@@ -8,3 +8,6 @@
 Logs/AssetImportWorker1.log
 *.log
 *.dwlt
+Logs/AssetImportWorker0.log
+Logs/AssetImportWorker0.log
+*.log

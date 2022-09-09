@@ -173,6 +173,10 @@ namespace UnityEngine {
         public static explicit operator Vector3(Vector3d vector3d) {
             return new Vector3((float)vector3d.x, (float)vector3d.y, (float)vector3d.z);
         }
+        
+        public static explicit operator Vector3d(Vector3 vector3) {
+            return new Vector3d((double)vector3.x, (double)vector3.y, (double)vector3.z);
+        }
 
         public static Vector3d Lerp(Vector3d from, Vector3d to, double t) {
             t = Mathd.Clamp01(t);
