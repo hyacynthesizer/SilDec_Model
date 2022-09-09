@@ -26,7 +26,7 @@ public class MainCamera : MonoBehaviour
         float pitchVel = 50f;
         float ascendVel = 2f;
         float descendVel = 1f;
-        float floorHeight = 0.01f;
+//        float floorHeight = 0.01f;
         
         transform.position = new Vector3(0,0.4f,-2f);
         transform.rotation = Quaternion.identity;
@@ -57,6 +57,7 @@ public class MainCamera : MonoBehaviour
         
         // do the movement things
         transform.Translate(vertTrans, 0, horizTrans); // SOMEHOW ONLY FORWARD-BACKWARD MOVING WORKS RIGHT NOW -- FIND OUT WHY!!!
+        print(vertTrans + ", " + ySpeed + ", " + horizRot + ", " + vertRot);
         /* if (transform.position.y <= floorHeight && ySpeed < 0)
         {
             ySpeed = 0f;
@@ -64,16 +65,10 @@ public class MainCamera : MonoBehaviour
         transform.Translate(0, ySpeed, 0, Space.World);
         transform.Rotate(-vertRot, horizRot, 0);
         
-        if (reset)
-        {
-            ResetTilt();
-        }     
+        if (reset){ ResetTilt(); }     
         
         // shifting origin
-        if (transform.position.magnitude >= maxOriginDistance)
-        {
-            ShiftAll(transform.position, bodies);
-        }
+        if (transform.position.magnitude >= maxOriginDistance){ ShiftAll(transform.position, bodies); }
     }
     
       
