@@ -5,9 +5,6 @@
 /Library/
 /UserSettings/
 /Logs/
-Logs/AssetImportWorker1.log
+Logs/
 *.log
 *.dwlt
-Logs/AssetImportWorker0.log
-Logs/AssetImportWorker0.log
-*.log
