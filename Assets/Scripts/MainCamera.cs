@@ -56,7 +56,7 @@ public class MainCamera : MonoBehaviour
         ySpeed *= dt;
         
         // do the movement things
-        transform.Translate(vertTrans, 0, horizTrans);
+        transform.Translate(vertTrans, 0, horizTrans); // SOMEHOW ONLY FORWARD-BACKWARD MOVING WORKS RIGHT NOW -- FIND OUT WHY!!!
         /* if (transform.position.y <= floorHeight && ySpeed < 0)
         {
             ySpeed = 0f;
