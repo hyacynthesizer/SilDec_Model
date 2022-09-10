@@ -21,12 +21,11 @@ public class MainCamera : MonoBehaviour
     void Start()
     {
         horizVel = 50f;
-        float vertVel = 50f;
-        float panVel = 50f;
-        float pitchVel = 50f;
-        float ascendVel = 2f;
-        float descendVel = 1f;
-//        float floorHeight = 0.01f;
+        vertVel = 50f;
+        panVel = 50f;
+        pitchVel = 50f;
+        ascendVel = 2f;
+        descendVel = 1f;
         
         transform.position = new Vector3(0,0.4f,-2f);
         transform.rotation = Quaternion.identity;
@@ -35,9 +34,9 @@ public class MainCamera : MonoBehaviour
 
     void Update() // add in support for different camera modes? like overhead for measuring, etc
     {
-        // read keys
+        // read keys (yes i know they're misnamed for the axes)
         float horizTrans = Input.GetAxis("Vertical") * horizVel; // forward and back
-        float vertTrans = Input.GetAxis("Horizontal") * vertVel;
+        float vertTrans = Input.GetAxis("Horizontal") * vertVel; // side to side
         float horizRot = Input.GetAxis("Pan") * panVel; // controlled with J & L
         float vertRot = Input.GetAxis("Pitch") * pitchVel; // controlled with I & K
         float ySpeed = 0f;
@@ -56,12 +55,8 @@ public class MainCamera : MonoBehaviour
         ySpeed *= dt;
         
         // do the movement things
-        transform.Translate(vertTrans, 0, horizTrans); // SOMEHOW ONLY FORWARD-BACKWARD MOVING WORKS RIGHT NOW -- FIND OUT WHY!!!
-        print(vertTrans + ", " + ySpeed + ", " + horizRot + ", " + vertRot);
-        /* if (transform.position.y <= floorHeight && ySpeed < 0)
-        {
-            ySpeed = 0f;
-        } */
+        transform.Translate(vertTrans, 0, horizTrans);
+//        print(Input.GetAxis("Horizontal") + ", " + Input.GetKey(KeyCode.Space) + ", " + Input.GetAxis("Pan") + ", " + Input.GetAxis("Pitch"));
         transform.Translate(0, ySpeed, 0, Space.World);
         transform.Rotate(-vertRot, horizRot, 0);
         
@@ -86,5 +81,6 @@ public class MainCamera : MonoBehaviour
 //            print(transform.rotation.eulerAngles);
 //            print(anglesAdjust);
         transform.Rotate(anglesAdjust);
+        print("resetting");
     }
 }
