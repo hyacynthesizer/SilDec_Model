@@ -24,8 +24,8 @@ public class MainCamera : MonoBehaviour
         vertVel = 50f;
         panVel = 50f;
         pitchVel = 50f;
-        ascendVel = 2f;
-        descendVel = 1f;
+        ascendVel = 10f;
+        descendVel = 5f;
         
         transform.position = new Vector3(0,0.4f,-2f);
         transform.rotation = Quaternion.identity;
@@ -40,7 +40,7 @@ public class MainCamera : MonoBehaviour
         float horizRot = Input.GetAxis("Pan") * panVel; // controlled with J & L
         float vertRot = Input.GetAxis("Pitch") * pitchVel; // controlled with I & K
         float ySpeed = 0f;
-        bool reset = Input.GetKey(KeyCode.R); // snap camera to no X or Z rotation
+        bool reset = Input.GetKeyDown(KeyCode.R); // snap camera to no X or Z rotation
         
         if (Input.GetKey(KeyCode.Space)) { ySpeed += ascendVel; } // I GET UP! 
         
@@ -64,6 +64,18 @@ public class MainCamera : MonoBehaviour
         
         // shifting origin
         if (transform.position.magnitude >= maxOriginDistance){ ShiftAll(transform.position, bodies); }
+        
+        // make this way of snapping to target be better at a later time
+        if (Input.GetKey(KeyCode.Alpha1)) {transform.LookAt(GameObject.Find("P1").transform.position);}
+        if (Input.GetKey(KeyCode.Alpha2)) {transform.LookAt(GameObject.Find("P2").transform.position);}
+        if (Input.GetKey(KeyCode.Alpha3)) {transform.LookAt(GameObject.Find("P3").transform.position);}
+        if (Input.GetKey(KeyCode.Alpha4)) {transform.LookAt(GameObject.Find("P4").transform.position);}
+        if (Input.GetKey(KeyCode.Alpha5)) {transform.LookAt(GameObject.Find("P5").transform.position);}
+        if (Input.GetKey(KeyCode.Alpha6)) {transform.LookAt(GameObject.Find("P6").transform.position);}
+        if (Input.GetKey(KeyCode.Alpha7)) {transform.LookAt(GameObject.Find("M1P2").transform.position);}
+        if (Input.GetKey(KeyCode.Alpha8)) {transform.LookAt(GameObject.Find("M2P2").transform.position);}
+        if (Input.GetKey(KeyCode.Alpha0)) {transform.LookAt(GameObject.Find("Stellar Bodies").transform.position);}
+        // this is just being shitty for testing purposes i swear
     }
     
       
@@ -81,6 +93,5 @@ public class MainCamera : MonoBehaviour
 //            print(transform.rotation.eulerAngles);
 //            print(anglesAdjust);
         transform.Rotate(anglesAdjust);
-        print("resetting");
     }
 }

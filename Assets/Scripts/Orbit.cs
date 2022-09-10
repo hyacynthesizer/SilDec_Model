@@ -54,7 +54,7 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
         
         if (units == AxisUnits.Km) // scaling the position properly, from AU/Km to system units
         {
-            axis /= AUinKM;
+            axis /= AUinKM; // moons are still ending up in the middle of nowhere
         }
         
         basePosition = GetPosition(0d);
