@@ -25,7 +25,6 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
     public Transform parent;
     
     private Vector3d truePosition;
-    private Vector3 position;
     private BodiesHandler master;
     private double worldTime;
     private double currentTime;
@@ -48,7 +47,6 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
     {
         parent = gameObject.transform; // the transform of the planetary body
         truePosition = Vector3d.zero;
-        position = (Vector3)truePosition;
         master = (BodiesHandler)FindObjectOfType(typeof(BodiesHandler));
         worldTime = master.worldTime;
         currentTime = worldTime;
@@ -93,6 +91,7 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
         }
     }
     
+    // get the global world time from the bodies handler
     double GetTime(BodiesHandler source) { return master.worldTime; }
     
     void SetRadius(double radius, BodyType type, Transform destination)
@@ -111,6 +110,11 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
         tempRadius *= RadiusScale;
         float rad = (float)tempRadius;
         destination.localScale = new Vector3(rad, rad, rad);
+    }
+    
+    void SetRotation()
+    {
+        // handle all the axial tilt bullshit
     }
     
     // here be all the functions and stuff
@@ -141,8 +145,7 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
     void SetPosition(Vector3d update) // downgrades to float position for rendering, etc
     {
         truePosition = update;
-        position = (Vector3)update;
-        parent.localPosition = position; // move the transform relative to body handler
+        parent.localPosition = (Vector3)truePosition; // move the transform relative to body handler
         // it should actually be intended behavior that moons are placed on a plane relative to their parent
         // since they follow the axial tilt and all that
     }
