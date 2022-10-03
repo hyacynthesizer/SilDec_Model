@@ -80,12 +80,14 @@ public class BodiesHandler : MonoBehaviour
     void ResetAll()
     {
         // iterate over all bodies, moving them to their t=0 positions
-        foreach (var pair in allPlanets)
+        foreach (var pairs in allPlanets)
         {
             pair.Value.ResetPosition();
         }
     }
     
+    // slides over the parent obejct, so that all the planets still move correctly
+    // since their positions are relative to the parent in the first place
     public static void TranslateAll(Vector3 move)
     {
         GameObject bodies = GameObject.Find("Stellar Bodies");

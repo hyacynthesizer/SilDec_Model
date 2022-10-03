@@ -56,7 +56,6 @@ public class MainCamera : MonoBehaviour
         
         // do the movement things
         transform.Translate(vertTrans, 0, horizTrans);
-//        print(Input.GetAxis("Horizontal") + ", " + Input.GetKey(KeyCode.Space) + ", " + Input.GetAxis("Pan") + ", " + Input.GetAxis("Pitch"));
         transform.Translate(0, ySpeed, 0, Space.World);
         transform.Rotate(-vertRot, horizRot, 0);
         

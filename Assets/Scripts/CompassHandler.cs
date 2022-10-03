@@ -10,11 +10,11 @@ public class CompassHandler : MonoBehaviour
     private Transform axes;
     private Transform textbox;
     
-    void Start()
+    void Start() // essentially just moving all the HUD elements into place
     {
         transform.position = new Vector3(0,0,0); // keep reference in place
         
-        // assign children from list, in order (WILL BREAK IF REORDERED)
+        // assign children by name (won't break if reordered now, thank god)
         cam = GameObject.Find("Compass Camera").transform;
         axes = GameObject.Find("Axis Center").transform;
         

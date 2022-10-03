@@ -71,7 +71,7 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
     void Update()
     {
         worldTime = GetTime(master);
-        if (Mathd.Abs(worldTime - currentTime) >= Double.Epsilon)
+        if (Mathd.Abs(worldTime - currentTime) >= Double.Epsilon) // only update if the time variable is meaningful
         {
             currentTime = worldTime;
             // call GetPosition and then move the GameObject accordingly
