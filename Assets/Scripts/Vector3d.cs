@@ -162,6 +162,28 @@ namespace UnityEngine {
             return new Vector3d(a.x / d, a.y / d, a.z / d);
         }
 
+        //  time to jank in a Quaternion * Vector3d operation here, wahoo!
+        public static Vector3d operator *(Quaternion quat, Vector3d vec){
+            double num = quat.x * 2d;
+            double num2 = quat.y * 2d;
+            double num3 = quat.z * 2d;
+            double num4 = quat.x * num;
+            double num5 = quat.y * num2;
+            double num6 = quat.z * num3;
+            double num7 = quat.x * num2;
+            double num8 = quat.x * num3;
+            double num9 = quat.y * num3;
+            double num10 = quat.w * num;
+            double num11 = quat.w * num2;
+            double num12 = quat.w * num3;
+            Vector3d result;
+            result.x = (1d - (num5 + num6)) * vec.x + (num7 - num12) * vec.y + (num8 + num11) * vec.z;
+            result.y = (num7 + num12) * vec.x + (1d - (num4 + num6)) * vec.y + (num9 - num10) * vec.z;
+            result.z = (num8 - num11) * vec.x + (num9 + num10) * vec.y + (1d - (num4 + num5)) * vec.z;
+            return result;
+        }
+
+        
         public static bool operator ==(Vector3d lhs, Vector3d rhs) {
             return (double)Vector3d.SqrMagnitude(lhs - rhs) < 0.0 / 1.0;
         }

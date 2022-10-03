@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static System.Math;
+using static System.Math; // to make all the equations less bad
 using System; // for number type properties, etc
 
 public class Orbit : MonoBehaviour // to be attached to each planet and prefab
@@ -26,13 +26,14 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
     
     private Vector3d truePosition;
     private Vector3 position;
+    private Vector3 basePosition; // exists to work around calling ResetPosition from BodiesHandler?
+    // probably a nicer fix than that, but whatever
     private BodiesHandler master;
     private double worldTime;
     private double currentTime;
-    private Vector3d basePosition;
     
     // converting distances and sizes to unity units
-    private static double AxisScale = 500d; // AU to units
+    private static double AxisScale = 250d; // AU to units
     private static double RadiusScale = 0.00001d; // km to units
     
     // constants for how big shit is
@@ -42,10 +43,12 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
     private static double MoonRadius = 1737.4; // in kilometers
     private static double AUinKM = 149597870.7;
     
+    private Quaterion qTotal; // parsing the orbital elements rotation
+    
     // Start is called before the first frame update
     void Start()
     {
-        parent = gameObject.transform;
+        parent = gameObject.transform; // the transform of the planetary body
         truePosition = Vector3d.zero;
         position = (Vector3)truePosition;
         master = (BodiesHandler)FindObjectOfType(typeof(BodiesHandler));
@@ -57,23 +60,32 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
             axis /= AUinKM; // moons are still ending up in the middle of nowhere
         }
         
-        basePosition = GetPosition(0d);
-        
         // convert to radians
         loan *= PI/180d;
         aop *= PI/180d;
         ta *= PI/180d;
-        SetPosition(basePosition);
-        SetRadius(radius, type, parent);
+        
+        // initialize rotation bullshit! (should only need to crunch the quaternion once
+        Quaternion qo = new Quaternion(0,0,Sin(aop/2),Cos(aop/2));
+        Quaternion qi = new Quaternion(Sin(incl/2),0,0,Cos(incl/2));
+        Quaternion qO = new Quaternion(0,0,Sin(loan/2),Cos(loan/2));
+        Quaternion qFix = new Quaternion(Sin(PI/2),0,0,Cos(PI/2));
+        qTotal = ((qo * qi) * qO) * qFix; // qFix to flip the axes conventions
+        qTotal.x *= -1; // mirror the x-axis, since unity is Stupid like that
+        print(qTotal.ToString()); // just make sure it's working nicely
+        
+        basePosition = GetPosition(0d);
+        SetPosition(basePosition); // initial location at t=0
+        SetRadius(radius, type, parent); // adjust size of object
     }
 
     // Update is called once per frame
     void Update()
     {
-        worldTime = GetTime(master);
+        worldTime = GetTime(master); // ping the world time every frame
         if (Mathd.Abs(worldTime - currentTime) >= Double.Epsilon) // only update if the time variable is meaningful
         {
-            currentTime = worldTime;
+            currentTime = worldTime; // update the body's time to be with the world
             // call GetPosition and then move the GameObject accordingly
             // get truePosition
             // get trueRotation
@@ -82,10 +94,7 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
         }
     }
     
-    double GetTime(BodiesHandler source)
-    {
-        return master.worldTime;
-    }
+    double GetTime(BodiesHandler source) { return master.worldTime; }
     
     void SetRadius(double radius, BodyType type, Transform destination)
     {
@@ -108,37 +117,33 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
     // here be all the functions and stuff
     Vector3d GetPosition(double time) // where the orbit equation happens, scaling time n shit
     {
-        static double Sin2(double d) {
-            return Pow(Sin(d), 2d);
-        }
         
-        static double Cos2(double d) {
-            return Pow(Cos(d), 2d);
-        }
-        
-        time *= (PI * 2); // so that 1 period completes in 1 time
+        time *= (PI * 2) / 100; // so that 1 period completes in 100 time
+        // i know that all this scaling isnt super good
         // also need to scale by orbital period in terms of worldTime steps
         // time /= [orbital period], plus however time ends up being scaled, aaaaaa
         Vector3d newPosition = new Vector3d();
         
-        // 3d orbit equations from mathematica
-        // this is going to be gross, Sorry
-        {
-            newPosition.x = ((-(axis*ecc) + axis*Cos(time))*(Cos(aop)*Cos2(incl)*Cos(loan) + Cos(aop)*Cos(loan)*Sin2(incl) - Cos(incl)*Sin(aop)*Sin(loan)))/ (Cos2(aop)*Cos2(incl)*Cos2(loan) + Cos2(incl)*Cos2(loan)*Sin2(aop) + Cos2(aop)*Cos2(loan)*Sin2(incl) + Cos2(loan)*Sin2(aop)*Sin2(incl) +  Cos2(aop)*Cos2(incl)*Sin2(loan) + Cos2(incl)*Sin2(aop)*Sin2(loan) + Cos2(aop)*Sin2(incl)*Sin2(loan) + Sin2(aop)*Sin2(incl)*Sin2(loan)) + (axis*Sqrt(1 - Pow(ecc,2))*(-(Cos2(incl)*Cos(loan)*Sin(aop)) - Cos(loan)*Sin(aop)*Sin2(incl) - Cos(aop)*Cos(incl)*Sin(loan))*Sin(time))/(Cos2(aop)*Cos2(incl)*Cos2(loan) + Cos2(incl)*Cos2(loan)*Sin2(aop) + Cos2(aop)*Cos2(loan)*Sin2(incl) + Cos2(loan)*Sin2(aop)*Sin2(incl) + Cos2(aop)*Cos2(incl)*Sin2(loan) + Cos2(incl)*Sin2(aop)*Sin2(loan) + Cos2(aop)*Sin2(incl)*Sin2(loan) + Sin2(aop)*Sin2(incl)*Sin2(loan));
-            // i am so sorry to anyone who has to read this for any reason
-            // i did this initial matrix baking in mathematica
-            newPosition.z = ((-(axis*ecc) + axis*Cos(time))*(Cos(incl)*Cos(loan)*Sin(aop) + Cos(aop)*Cos2(incl)*Sin(loan) + Cos(aop)*Sin2(incl)*Sin(loan)))/(Cos2(aop)*Cos2(incl)*Cos2(loan) + Cos2(incl)*Cos2(loan)*Sin2(aop) + Cos2(aop)*Cos2(loan)*Sin2(incl) + Cos2(loan)*Sin2(aop)*Sin2(incl) + Cos2(aop)*Cos2(incl)*Sin2(loan) + Cos2(incl)*Sin2(aop)*Sin2(loan) + Cos2(aop)*Sin2(incl)*Sin2(loan) + Sin2(aop)*Sin2(incl)*Sin2(loan)) + (axis*Sqrt(1 - Pow(ecc,2d))*(Cos(aop)*Cos(incl)*Cos(loan) - Cos2(incl)*Sin(aop)*Sin(loan) - Sin(aop)*Sin2(incl)*Sin(loan))*Sin(time))/(Cos2(aop)*Cos2(incl)*Cos2(loan) + Cos2(incl)*Cos2(loan)*Sin2(aop) + Cos2(aop)*Cos2(loan)*Sin2(incl) + Cos2(loan)*Sin2(aop)*Sin2(incl) + Cos2(aop)*Cos2(incl)*Sin2(loan) + Cos2(incl)*Sin2(aop)*Sin2(loan) + Cos2(aop)*Sin2(incl)*Sin2(loan) + Sin2(aop)*Sin2(incl)*Sin2(loan));
-            // if you're reading this for debugging i apologize
-            newPosition.y = ((-(axis*ecc) + axis*Cos(time))*(Cos2(loan)*Sin(aop)*Sin(incl) + Sin(aop)*Sin(incl)*Sin2(loan)))/(Cos2(aop)*Cos2(incl)*Cos2(loan) + Cos2(incl)*Cos2(loan)*Sin2(aop) + Cos2(aop)*Cos2(loan)*Sin2(incl) + Cos2(loan)*Sin2(aop)*Sin2(incl) + Cos2(aop)*Cos2(incl)*Sin2(loan) + Cos2(incl)*Sin2(aop)*Sin2(loan) + Cos2(aop)*Sin2(incl)*Sin2(loan) + Sin2(aop)*Sin2(incl)*Sin2(loan)) + (axis*Sqrt(1 - Pow(ecc,2d))*(Cos(aop)*Cos2(loan)*Sin(incl) + Cos(aop)*Sin(incl)*Sin2(loan))*Sin(time))/(Cos2(aop)*Cos2(incl)*Cos2(loan) + Cos2(incl)*Cos2(loan)*Sin2(aop) + Cos2(aop)*Cos2(loan)*Sin2(incl) + Cos2(loan)*Sin2(aop)*Sin2(incl) + Cos2(aop)*Cos2(incl)*Sin2(loan) + Cos2(incl)*Sin2(aop)*Sin2(loan) + Cos2(aop)*Sin2(incl)*Sin2(loan) + Sin2(aop)*Sin2(incl)*Sin2(loan));
-        }
+        // quaternion * Vector3d point gives a rotated point
+        // q1 * q2 takes q1 first then applies q2
+        // Quaternion rot = qo * qi * qO, then multiply that by the Vector3d point
+        // either Vector3d point needs to be correct for unity's axes and qTotal needs to be rotated,
+        // or point is in mathematica's axes, and then correction at the very end 
+        // (let's assume that Vector3d is calculated properly, so change axes before rotating point)
         
+        // run the actual ellipse equations now
+        newPosition.y = 0;
+        newPosition.x = axis * Cos(time + ta) - axis * ecc;
+        newPosition.z = axis * Sqrt(1d - Pow(ecc, 2)) * Sin(time + ta);
         
-        return newPosition * AxisScale;
+        return (qTotal * newPosition) * AxisScale;
     }
     
     void SetPosition(Vector3d update) // downgrades to float position for rendering, etc
     {
-        parent.position = (Vector3)update;
+        truePosition = update;
+        position = (Vector3)update;
+        parent.localPosition = position; // move the transform relative to body handler
     }
     
     public void ResetPosition() // to be called from the body handler
