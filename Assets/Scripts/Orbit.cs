@@ -26,8 +26,6 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
     
     private Vector3d truePosition;
     private Vector3 position;
-    private Vector3 basePosition; // exists to work around calling ResetPosition from BodiesHandler?
-    // probably a nicer fix than that, but whatever
     private BodiesHandler master;
     private double worldTime;
     private double currentTime;
@@ -74,8 +72,7 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
         qTotal.x *= -1; // mirror the x-axis, since unity is Stupid like that
         print(qTotal.ToString()); // just make sure it's working nicely
         
-        basePosition = GetPosition(0d);
-        SetPosition(basePosition); // initial location at t=0
+        SetPosition(GetPosition(0d)); // initial location at t=0
         SetRadius(radius, type, parent); // adjust size of object
     }
 
@@ -87,10 +84,12 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
         {
             currentTime = worldTime; // update the body's time to be with the world
             // call GetPosition and then move the GameObject accordingly
-            // get truePosition
+            Vector3d newPos = GetPosition(currentTime);
+            SetPosition(newPos); // already takes care of updating the true position stores
+            
             // get trueRotation
             // update accordingly
-            SetPosition(truePosition);
+            
         }
     }
     
@@ -144,11 +143,14 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
         truePosition = update;
         position = (Vector3)update;
         parent.localPosition = position; // move the transform relative to body handler
+        // it should actually be intended behavior that moons are placed on a plane relative to their parent
+        // since they follow the axial tilt and all that
     }
     
-    public void ResetPosition() // to be called from the body handler
+    public void ResetPosition(Orbit body) // to be called from the body handler
     {
-        SetPosition(basePosition);
+        SetPosition(body.GetPosition(0d));
+        body.worldTime = body.currentTime = 0d; // i stg if this causes access violations
     }
     
 }

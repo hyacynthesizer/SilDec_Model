@@ -82,7 +82,7 @@ public class BodiesHandler : MonoBehaviour
         // iterate over all bodies, moving them to their t=0 positions
         foreach (var pairs in allPlanets)
         {
-            pair.Value.ResetPosition();
+            pairs.Value.ResetPosition(pairs.Value);
         }
     }
     
