@@ -40,7 +40,7 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
     private static double MoonRadius = 1737.4; // in kilometers
     private static double AUinKM = 149597870.7;
     
-    private Quaterion qTotal; // parsing the orbital elements rotation
+    private Quaternion qTotal; // parsing the orbital elements rotation
     
     // Start is called before the first frame update
     void Start()
@@ -62,10 +62,10 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
         ta *= PI/180d;
         
         // initialize rotation bullshit! (should only need to crunch the quaternion once
-        Quaternion qo = new Quaternion(0,0,Sin(aop/2),Cos(aop/2));
-        Quaternion qi = new Quaternion(Sin(incl/2),0,0,Cos(incl/2));
-        Quaternion qO = new Quaternion(0,0,Sin(loan/2),Cos(loan/2));
-        Quaternion qFix = new Quaternion(Sin(PI/2),0,0,Cos(PI/2));
+        Quaternion qo = new Quaternion(0,0,(float)Sin(aop/2),(float)Cos(aop/2));
+        Quaternion qi = new Quaternion((float)Sin(incl/2),0,0,(float)Cos(incl/2));
+        Quaternion qO = new Quaternion(0,0,(float)Sin(loan/2),(float)Cos(loan/2));
+        Quaternion qFix = new Quaternion((float)Sin(PI/2),0,0,(float)Cos(PI/2));
         qTotal = ((qo * qi) * qO) * qFix; // qFix to flip the axes conventions
         qTotal.x *= -1; // mirror the x-axis, since unity is Stupid like that
         print(qTotal.ToString()); // just make sure it's working nicely
