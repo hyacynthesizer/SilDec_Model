@@ -67,9 +67,10 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
         Quaternion qi = new Quaternion((float)Sin(incl/2),0,0,(float)Cos(incl/2));
         Quaternion qO = new Quaternion(0,0,(float)Sin(loan/2),(float)Cos(loan/2));
         Quaternion qFix = new Quaternion((float)Sin(PI/2),0,0,(float)Cos(PI/2));
-        qTotal = ((qo * qi) * qO) * qFix; // qFix to flip the axes conventions
+        qTotal = (qo * qi) * qO; 
+        qTotal = qTotal * qFix; // qFix to flip the axes conventions
         qTotal.x *= -1; // mirror the x-axis, since unity is Stupid like that
-        print(qTotal.ToString()); // just make sure it's working nicely
+        print(id + ": " + qTotal.ToString()); // just make sure it's working nicely
         
         SetPosition(GetPosition(0d)); // initial location at t=0
         SetRadius(radius, type, parent); // adjust size of object
