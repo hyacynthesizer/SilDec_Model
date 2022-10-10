@@ -30,11 +30,12 @@ public class Orbit : MonoBehaviour // to be attached to each planet and prefab
     private double currentTime;
     
     // converting distances and sizes to unity units
-    private static double AxisScale = 250d; // AU to units
-    private static double RadiusScale = 0.00001d; // km to units
+    private static double AxisScale = 5d; // AU to units (250d for now)
+    private static double RadiusScale = 0.00005d; // km to units (0.00001d for now)
     
     // constants for how big shit is
-    private static double SunRadius = 696342; // in kilometers
+    // private static double SunRadius = 696342; // in kilometers
+    private static double SunRadius = 15000; // temporary just for scaling
     private static double EarthRadius = 6371; // in kilometers
     private static double JupiterRadius = 69909; // in kilometers
     private static double MoonRadius = 1737.4; // in kilometers
