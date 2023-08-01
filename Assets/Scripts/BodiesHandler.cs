@@ -26,6 +26,7 @@ public class BodiesHandler : MonoBehaviour
     
     void Start()
     {
+        self = GameObject.Find("Stellar Bodies"); // access to self, in case needs to be called from outside
         transform.position = new Vector3(0,0,0); // no more positioning jank, please!
         truePos = Vector3d.zero;
         // find the prefabs
